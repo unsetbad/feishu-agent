@@ -168,6 +168,8 @@ def reply_to_message(message_id: str, text: str, event_id: str) -> None:
     if not text:
         text = "我没有生成到有效回复。"
     max_chars = env_int("FEISHU_REPLY_MAX_CHARS", 4000)
+    use_markdown = os.environ.get("FEISHU_REPLY_FORMAT", "markdown").lower() == "markdown"
+    flag = "--markdown" if use_markdown else "--text"
     command = [
         "lark-cli",
         "im",
@@ -176,7 +178,7 @@ def reply_to_message(message_id: str, text: str, event_id: str) -> None:
         "bot",
         "--message-id",
         message_id,
-        "--text",
+        flag,
         text[:max_chars],
         "--idempotency-key",
         event_id,
